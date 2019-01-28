@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  firefox:
+    image: selenium/standalone-firefox:3.5.0
+    container_name: "selenium_driver"
+    restart: always
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    volumes:
+      - "/dev/shm:/dev/shm"
+    networks:
+      - selenium
+
+  webapi:
+    container_name: "webapi"
+    build: ./
+    volumes:
+      - .:/app
+    links:
+      - firefox
+    ports:
+        - "5000:5000"
+    expose:
+        - "5000"
+    restart: always
+    networks:
+      - selenium
+    command: python3 /app/webapi.py
+
+volumes:
+  devshm:
+
+networks:
+  selenium:
